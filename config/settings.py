@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'drf_yasg',
     'habits',
+    'users',
 ]
 
 MIDDLEWARE = [
@@ -165,3 +166,5 @@ REST_FRAMEWORK = {
     ),
     'PAGE_SIZE': 5,
 }
+
+AUTH_USER_MODEL = 'users.User'

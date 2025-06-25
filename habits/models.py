@@ -1,11 +1,11 @@
 from django.db import models
-from django.contrib.auth import get_user_model
+from users.models import User
 from django.core.exceptions import ValidationError
 
 
 class Habit(models.Model):
     user = models.ForeignKey(
-        get_user_model(),
+        User,
         on_delete=models.CASCADE,
         related_name='habits',
         verbose_name='Пользователь'

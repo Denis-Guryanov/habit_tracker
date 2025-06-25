@@ -5,11 +5,12 @@ from rest_framework import status
 from django.core.exceptions import ValidationError
 from .models import Habit
 from .serializers import HabitSerializer
+from users.models import User
 
 class HabitModelTests(TestCase):
     def setUp(self):
-        self.user = get_user_model().objects.create_user(
-            username='test',
+        self.user = User.objects.create_user(
+            email='test@example.com',
             password='testpass'
         )
 
@@ -136,8 +137,8 @@ class HabitModelTests(TestCase):
 
 class HabitSerializerTests(TestCase):
     def setUp(self):
-        self.user = get_user_model().objects.create_user(
-            username='test2',
+        self.user = User.objects.create_user(
+            email='test2@example.com',
             password='testpass'
         )
 
@@ -174,18 +175,17 @@ class UserRegistrationTests(APITestCase):
     def test_register_user(self):
         """Тест регистрации пользователя"""
         data = {
-            'username': 'newuser',
-            'email': 'new@user.com',
+            'email': 'newuser@example.com',
             'password': 'newpass123'
         }
         response = self.client.post('/api/register/', data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertTrue(get_user_model().objects.filter(username='newuser').exists())
+        self.assertTrue(User.objects.filter(email='newuser@example.com').exists())
 
 class HabitAPITests(APITestCase):
     def setUp(self):
-        self.user = get_user_model().objects.create_user(
-            username='apiuser',
+        self.user = User.objects.create_user(
+            email='apiuser@example.com',
             password='apipass'
         )
         self.client.force_authenticate(user=self.user)

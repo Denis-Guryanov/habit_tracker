@@ -22,6 +22,7 @@ from rest_framework.authtoken.views import obtain_auth_token
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from rest_framework import permissions
+from users.views import UserRegisterView
 
 router = DefaultRouter()
 router.register(r'habits', HabitViewSet, basename='habit')
@@ -38,7 +39,7 @@ schema_view = get_schema_view(
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/register/', RegisterView.as_view(), name='register'),
+    path('api/register/', UserRegisterView.as_view(), name='register'),
     path('api/', include(router.urls)),
     path('api/auth/', include('rest_framework.urls')),  # session auth
     path('api/token/', obtain_auth_token, name='api_token_auth'),  # token auth
