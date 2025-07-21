@@ -71,7 +71,7 @@ jobs:
           key: ${{ secrets.SERVER_SSH_KEY }}
           port: ${{ secrets.SERVER_PORT }}
           script: |
-            cd /home/test/habit_tracker
+            cd /home/habit_tracker
             git pull origin master
             docker-compose down
             docker-compose build
