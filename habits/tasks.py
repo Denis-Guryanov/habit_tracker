@@ -1,7 +1,9 @@
 from celery import shared_task
-from .telegram import send_telegram_message
 from django.utils import timezone
+
 from .models import Habit
+from .telegram import send_telegram_message
+
 
 @shared_task
 def send_habit_reminders_for_today():
@@ -15,14 +17,21 @@ def send_habit_reminders_for_today():
             if days_since % habit.period != 0:
                 continue
         # Время напоминания: если время привычки близко к текущему (±5 минут)
-        if abs((timezone.datetime.combine(today, habit.time) - timezone.now()).total_seconds()) <= 300:
-            send_telegram_message(habit.chat_id, f'Напоминание: {habit.action} в {habit.time} в {habit.place}')
+        if (abs((timezone.datetime.combine(today, habit.time) - timezone.now()).total_seconds()) <= 300):
+            send_telegram_message(
+                habit.chat_id,
+                f"Напоминание: {habit.action} в {habit.time} в {habit.place}",
+            )
+
 
 @shared_task
 def send_habit_reminder(habit_id, chat_id):
     from .models import Habit
+
     try:
         habit = Habit.objects.get(id=habit_id)
-        send_telegram_message(chat_id, f'Напоминание: {habit.action} в {habit.time} в {habit.place}')
+        send_telegram_message(
+            chat_id, f"Напоминание: {habit.action} в {habit.time} в {habit.place}"
+        )
     except Habit.DoesNotExist:
-        pass 
+        pass
