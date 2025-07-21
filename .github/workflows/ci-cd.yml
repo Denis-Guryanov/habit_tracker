@@ -19,9 +19,9 @@ jobs:
         ports: [6379:6379]
     env:
       USE_SQLITE: true
-      DJANGO_SECRET_KEY: test_secret
-      DJANGO_DEBUG: true
-      DJANGO_ALLOWED_HOSTS: localhost,127.0.0.1
+      SECRET_KEY: test_secret
+      DEBUG: true
+      ALLOWED_HOSTS: localhost,127.0.0.1
       REDIS_HOST: localhost
       REDIS_PORT: 6379
       CELERY_BROKER_URL: redis://localhost:6379/0
