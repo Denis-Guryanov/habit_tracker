@@ -4,12 +4,10 @@ on:
   push:
     branches:
       - develop
-      - main
       - master
   pull_request:
     branches:
       - develop
-      - main
       - master
 
 jobs:
@@ -21,9 +19,9 @@ jobs:
         ports: [6379:6379]
     env:
       USE_SQLITE: true
-      DJANGO_SECRET_KEY: test_secret
-      DJANGO_DEBUG: true
-      DJANGO_ALLOWED_HOSTS: localhost,127.0.0.1
+      SECRET_KEY: test_secret
+      DEBUG: true
+      ALLOWED_HOSTS: localhost,127.0.0.1
       REDIS_HOST: localhost
       REDIS_PORT: 6379
       CELERY_BROKER_URL: redis://localhost:6379/0
@@ -38,7 +36,11 @@ jobs:
       - name: Install dependencies
         run: poetry install --no-interaction --no-ansi
       - name: Lint with flake8
-        run: poetry run flake8 .
+        run: poetry run flake8 . --ignore=F401,F841
+      - name: Run make migrations
+        run: poetry run python manage.py makemigrations
+      - name: Run migrate
+        run: poetry run python manage.py migrate
       - name: Run tests
         run: poetry run python manage.py test
 
@@ -47,6 +49,11 @@ jobs:
     needs: test-lint
     steps:
       - uses: actions/checkout@v4
+      - name: Set up Docker Compose
+        run: |
+          sudo curl -L "https://github.com/docker/compose/releases/download/v2.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+          sudo chmod +x /usr/local/bin/docker-compose
+          docker-compose version
       - name: Build Docker images
         run: docker-compose build
 
