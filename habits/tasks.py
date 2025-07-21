@@ -17,7 +17,7 @@ def send_habit_reminders_for_today():
             if days_since % habit.period != 0:
                 continue
         # Время напоминания: если время привычки близко к текущему (±5 минут)
-        if (abs((timezone.datetime.combine(today, habit.time) - timezone.now()).total_seconds())<= 300):
+        if (abs((timezone.datetime.combine(today, habit.time) - timezone.now()).total_seconds()) <= 300):
             send_telegram_message(
                 habit.chat_id,
                 f"Напоминание: {habit.action} в {habit.time} в {habit.place}",
