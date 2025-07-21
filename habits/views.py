@@ -1,5 +1,6 @@
 # flake8: noqa
-from rest_framework import viewsets, permissions, filters, generics
+from rest_framework import filters, generics, permissions, viewsets
+
 from .models import Habit
 from .serializers import HabitSerializer, RegisterSerializer
 

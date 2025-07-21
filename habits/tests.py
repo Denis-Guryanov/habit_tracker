@@ -1,11 +1,13 @@
-from django.test import TestCase
 from django.contrib.auth import get_user_model
-from rest_framework.test import APITestCase
-from rest_framework import status
 from django.core.exceptions import ValidationError
+from django.test import TestCase
+from rest_framework import status
+from rest_framework.test import APITestCase
+
+from users.models import User
+
 from .models import Habit
 from .serializers import HabitSerializer
-from users.models import User
 
 
 class HabitModelTests(TestCase):
