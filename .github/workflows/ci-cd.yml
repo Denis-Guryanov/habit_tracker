@@ -37,7 +37,7 @@ jobs:
         run: poetry install --no-interaction --no-ansi
       - name: Lint with flake8
         run: poetry run flake8 .
-      - name: Run makemigrations
+      - name: Run make migrations
         run: poetry run python manage.py makemigrations
       - name: Run migrate
         run: poetry run python manage.py migrate
