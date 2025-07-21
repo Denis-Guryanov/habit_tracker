@@ -1,0 +1,71 @@
+name: CI/CD
+
+on:
+  push:
+    branches:
+      - develop
+      - main
+      - master
+  pull_request:
+    branches:
+      - develop
+      - main
+      - master
+
+jobs:
+  test-lint:
+    runs-on: ubuntu-latest
+    services:
+      redis:
+        image: redis:7
+        ports: [6379:6379]
+    env:
+      USE_SQLITE: true
+      DJANGO_SECRET_KEY: test_secret
+      DJANGO_DEBUG: true
+      DJANGO_ALLOWED_HOSTS: localhost,127.0.0.1
+      REDIS_HOST: localhost
+      REDIS_PORT: 6379
+      CELERY_BROKER_URL: redis://localhost:6379/0
+      CELERY_RESULT_BACKEND: redis://localhost:6379/0
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Install Poetry
+        run: pip install poetry
+      - name: Install dependencies
+        run: poetry install --no-interaction --no-ansi
+      - name: Lint with flake8
+        run: poetry run flake8 .
+      - name: Run tests
+        run: poetry run python manage.py test
+
+  docker-build:
+    runs-on: ubuntu-latest
+    needs: test-lint
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build Docker images
+        run: docker-compose build
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: docker-build
+    if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Copy files via SSH and deploy
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          port: ${{ secrets.SERVER_PORT }}
+          script: |
+            cd /path/to/your/project
+            git pull origin master
+            docker-compose down
+            docker-compose build
+            docker-compose up -d 
